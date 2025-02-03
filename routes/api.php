@@ -2,10 +2,22 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\PersonController;
- 
-Route::get('/students', [PersonController::class, 'getAll']);
-Route::post('/students', [PersonController::class, 'createPerson']);
+use App\Http\Controllers\StudentController;
+
+
+//INSERTAR DATOS
+//CREATE
+Route::post('/students', [StudentController::class, 'createStudent']);
+
+
+//consulta de datos 
+//READ
+Route::get('/students', [StudentController::class, 'getAll']);
+Route::get('/students/names/{names}', [StudentController::class, 'getByName']);
+Route::get('/students/studentCode/{studentCode}', [StudentController::class, 'getByStudentCode']);
+Route::get('/students/lastNames/{lastNames}', [StudentController::class, 'getByLastName']);
+Route::get('/students/search/{any}', [StudentController::class, 'getByAny']);
+
 
 
 ?>
