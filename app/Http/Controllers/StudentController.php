@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Student;
@@ -9,6 +10,23 @@ use Illuminate\Support\Facades\Validator;
 
 class StudentController extends Controller
 {
+    private function dataClean(Request $request)
+    {
+        return [
+            'names' => trim($request->input('names')),
+            'lastNames' => trim($request->input('lastNames')),
+            'bornDate' => trim($request->input('bornDate'))
+        ];
+    }
+
+    private function validateStudentData(array $data)
+    {
+        return Validator::make($data, [
+            'names' => 'required|max:35',
+            'lastNames' => 'required|max:35',
+            'bornDate' => 'required|date|before:' . Carbon::now()->subYears(10)->toDateString()
+        ]);
+    }
 
     public function getAll()
     {
@@ -61,19 +79,10 @@ class StudentController extends Controller
     public function createStudent(Request $request)
     {
 
-        $names = trim($request->input('names'));
-        $lastNames = trim(string: $request->input('lastNames'));
-        $bornDate = trim($request->input('bornDate'));
+         $data = $this -> dataClean($request);
 
+         $validator  = $this -> validateStudentData($data);
 
-        // Validando los campos
-        $validator = Validator::make($request->all(), [
-            'names' => 'required|max:35',
-            'lastNames' => 'required|max:35',
-            'bornDate' => 'required|date|before:' . \Carbon\Carbon::now()->subYears(10)->toDateString() // toco averiguar que era Carbon
-        ]);
-
-        // Si falla la validación
         if ($validator->fails()) {
             return response()->json([
                 "error" => "Error en validación",
@@ -102,9 +111,9 @@ class StudentController extends Controller
         // Creando el estudiante
         $Student = Student::create(
             [
-                'names' => $names,
-                'lastNames' => $lastNames,
-                'bornDate' => $bornDate,
+                'names' => $data['names'],
+                'lastNames' => $data['lastNames'],
+                'bornDate' => $data['bornDate'],
                 'StudentCode' => $studentCode
             ]
         );
@@ -137,30 +146,32 @@ class StudentController extends Controller
     }
 
     public function editStudent(Request $request){
-        $names = trim($request->input('names'));
-        $lastNames = trim(string: $request->input('lastNames'));
-        $bornDate = trim($request->input('bornDate'));
-        $id = trim($request->input('id'));
+  
+        $data = $this -> dataClean($request);
 
-        $validator = Validator::make($request->all(), [
-            'names' => 'required|max:35',
-            'lastNames' => 'required|max:35',
-            'bornDate' => 'required|date|before:' . \Carbon\Carbon::now()->subYears(10)->toDateString() // toco averiguar que era Carbon
-        ]);
+        $validator  = $this -> validateStudentData($data);
+
+        $id =  $request->input('id');
+       if ($validator->fails()) {
+           return response()->json([
+               "error" => "Error en validación",
+               "errores" => $validator->errors()
+           ], 400);
+       }
 
         $student = Student::find($id);
 
         $student->update(
             [      
-                'names' => $names,
-                'lastNames' => $lastNames,
-                'bornDate' => $bornDate
+                'names' => $data['names'],
+                'lastNames' => $data['lastNames'],
+                'bornDate' => $data['bornDate']
             ]
         );
 
         if(!$student ){
             return response()->json(['error'=>'error al crearlo'],500);
         } 
-        return response()->json(['creado con exito'=>$student],201);
+        return response()->json(['editado con exito'=>$student],201);
     }
 }
