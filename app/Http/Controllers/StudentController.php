@@ -137,6 +137,30 @@ class StudentController extends Controller
     }
 
     public function editStudent(Request $request){
+        $names = trim($request->input('names'));
+        $lastNames = trim(string: $request->input('lastNames'));
+        $bornDate = trim($request->input('bornDate'));
+        $id = trim($request->input('id'));
 
+        $validator = Validator::make($request->all(), [
+            'names' => 'required|max:35',
+            'lastNames' => 'required|max:35',
+            'bornDate' => 'required|date|before:' . \Carbon\Carbon::now()->subYears(10)->toDateString() // toco averiguar que era Carbon
+        ]);
+
+        $student = Student::find($id);
+
+        $student->update(
+            [      
+                'names' => $names,
+                'lastNames' => $lastNames,
+                'bornDate' => $bornDate
+            ]
+        );
+
+        if(!$student ){
+            return response()->json(['error'=>'error al crearlo'],500);
+        } 
+        return response()->json(['creado con exito'=>$student],201);
     }
 }

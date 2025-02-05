@@ -18,7 +18,9 @@ Route::get('/students/studentCode/{studentCode}', [StudentController::class, 'ge
 Route::get('/students/lastNames/{lastNames}', [StudentController::class, 'getByLastName']);
 Route::get('/students/search/{any}', [StudentController::class, 'getByAny']);
 
-
+//UPDATE
+//ACTUALIZAR DATOS 
+Route::post('/students/edit',[StudentController::class, 'editStudent']);
 
 ?>
 
