@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\StudentController;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Validator;
@@ -66,7 +67,11 @@ class userController extends Controller
             return response(["token"=>$token], Response::HTTP_OK)->withCookie($cookie);
 
         }
-        return response(Response::HTTP_UNAUTHORIZED);
+        return response(["error"=>"credenciales no coinciden"],Response::HTTP_UNAUTHORIZED);
 
+    }
+
+    public function getAllStudents(Request $request){
+        return "jala";
     }
 }

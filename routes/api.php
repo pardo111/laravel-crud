@@ -13,10 +13,13 @@ Route::post('/register', [userController::class, 'register']);
 Route::post('/login', [userController::class, 'login']);
 
 
+Route::group(['middleware'=>["auth:sanctum"]], function(){
+    Route::post('logout', [StudentController::class, 'logout']);
+    Route::get('/students', [userController::class, 'getAllStudents']);
 
+});
 //consulta de datos 
 //READ
-Route::get('/students', [StudentController::class, 'getAll']);
 Route::get('/students/names/{names}', [StudentController::class, 'getByName']);
 Route::get('/students/studentCode/{studentCode}', [StudentController::class, 'getByStudentCode']);
 Route::get('/students/lastNames/{lastNames}', [StudentController::class, 'getByLastName']);
