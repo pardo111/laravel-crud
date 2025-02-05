@@ -7,26 +7,13 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Student;
 use Illuminate\Support\Facades\Validator;
+use App\Http\Helpers\studentsTools;
 
 class StudentController extends Controller
 {
-    private function dataClean(Request $request)
-    {
-        return [
-            'names' => trim($request->input('names')),
-            'lastNames' => trim($request->input('lastNames')),
-            'bornDate' => trim($request->input('bornDate'))
-        ];
-    }
+  
 
-    private function validateStudentData(array $data)
-    {
-        return Validator::make($data, [
-            'names' => 'required|max:35',
-            'lastNames' => 'required|max:35',
-            'bornDate' => 'required|date|before:' . Carbon::now()->subYears(10)->toDateString()
-        ]);
-    }
+    
 
     public function getAll()
     {
@@ -79,9 +66,9 @@ class StudentController extends Controller
     public function createStudent(Request $request)
     {
 
-         $data = $this -> dataClean($request);
+         $data = studentsTools::dataClean($request);
 
-         $validator  = $this -> validateStudentData($data);
+         $validator  = studentsTools::validateStudentData($data);
 
         if ($validator->fails()) {
             return response()->json([
@@ -147,9 +134,9 @@ class StudentController extends Controller
 
     public function editStudent(Request $request){
   
-        $data = $this -> dataClean($request);
+        $data = studentsTools:: dataClean($request);
 
-        $validator  = $this -> validateStudentData($data);
+        $validator  =studentsTools:: validateStudentData($data);
 
         $id =  $request->input('id');
        if ($validator->fails()) {
