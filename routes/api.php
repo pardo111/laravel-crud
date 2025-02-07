@@ -3,19 +3,23 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\StudentController;
-use App\Http\Controllers\userController;
+use App\Http\Controllers\UserController;
 
 
 //INSERTAR DATOS
 //CREATE
 Route::post('/students', [StudentController::class, 'createStudent']);
-Route::post('/register', [userController::class, 'register']);
-Route::post('/login', [userController::class, 'login']);
+Route::post('/register', [UserController::class, 'register']);
+Route::post('/login', [UserController::class, 'login'])->name('login');
+Route::get('/login',function (){
+    return response()->json(["error"=>"datos invalidos"]);
+})->name('loginReturn');
+
 
 
 Route::group(['middleware'=>["auth:sanctum"]], function(){
     Route::post('logout', [StudentController::class, 'logout']);
-    Route::get('/students', [userController::class, 'getAllStudents']);
+    Route::get('/students', [UserController::class, 'getAllStudents']);
 
 });
 //consulta de datos 

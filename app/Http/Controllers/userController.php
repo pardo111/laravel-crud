@@ -12,7 +12,7 @@ use App\Models\User;
 use Laravel\Sanctum\HasApiTokens;
 
 
-class userController extends Controller
+class UserController extends Controller
 {
 
 
@@ -46,32 +46,31 @@ class userController extends Controller
     }
 
 
-    public function login (Request $request){
-        //al chile pone a verga estar validando siempre, pero toca
-        $validator =  Validator::make($request->all(),[
-            'email'=>'required|email',
-            'password'=>'required'
+    public function login(Request $request) {
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email',
+            'password' => 'required'
         ]);
-
+    
         if ($validator->fails()) {
             return response()->json([
                 "error" => "Error en logear",
                 "errores" => $validator->errors()
             ], 400);
         }
-
+    
         if (Auth::attempt($request->only('email', 'password'))) {
-            $user= Auth::user();
-            $token = $user->createToken('token')->plainTextToken;
-            $cookie = cookie('cookie_token', $token, 60*12);
-            return response(["token"=>$token], Response::HTTP_OK)->withCookie($cookie);
-
+            $user = Auth::user();
+            $token = $user->createToken('token')->plainTextToken; // Genera el token
+            $cookie = cookie('cookie_token', $token, 60 * 12); // Establece el cookie
+            return response(["token" => $token], Response::HTTP_OK)->withCookie($cookie);
         }
-        return response(["error"=>"credenciales no coinciden"],Response::HTTP_UNAUTHORIZED);
-
+    
+        return response(["error" => "Credenciales no coinciden"], Response::HTTP_UNAUTHORIZED);
     }
+    
 
     public function getAllStudents(Request $request){
-        return "jala";
+        return response()->json(["data"=>"jala"] , Response::HTTP_OK);
     }
 }
