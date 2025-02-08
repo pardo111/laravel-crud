@@ -9,7 +9,7 @@ use App\Http\Controllers\UserController;
 //INSERTAR DATOS
 //CREATE
 Route::post('/students', [StudentController::class, 'createStudent']);
-Route::post('/register', [UserController::class, 'register']);
+Route::post('/register', [UserController::class, 'registear']);
 Route::post('/login', [UserController::class, 'login'])->name('login');
 Route::get('/login',function (){
     return response()->json(["error"=>"datos invalidos"]);
@@ -20,10 +20,10 @@ Route::get('/login',function (){
 Route::group(['middleware'=>["auth:sanctum"]], function(){
     Route::post('logout', [StudentController::class, 'logout']);
     Route::get('/students', [UserController::class, 'getAllStudents']);
-
 });
 //consulta de datos 
 //READ
+Route::get('/students', [UserController::class, 'getAllStudents']);
 Route::get('/students/names/{names}', [StudentController::class, 'getByName']);
 Route::get('/students/studentCode/{studentCode}', [StudentController::class, 'getByStudentCode']);
 Route::get('/students/lastNames/{lastNames}', [StudentController::class, 'getByLastName']);

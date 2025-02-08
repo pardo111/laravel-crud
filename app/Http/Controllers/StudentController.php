@@ -132,33 +132,35 @@ class StudentController extends Controller
         return response()->json(["data"=>$data], 200);
     }
 
-    public function editStudent(Request $request){
-  
-        $data = studentsTools:: dataClean($request);
-
-        $validator  =studentsTools:: validateStudentData($data);
-
-        $id =  $request->input('id');
-       if ($validator->fails()) {
-           return response()->json([
-               "error" => "Error en validación",
-               "errores" => $validator->errors()
-           ], 400);
-       }
-
-        $student = Student::find($id);
-
-        $student->update(
-            [      
+    public function editStudent(Request $request) {
+        try {
+            $data = studentsTools::dataClean($request);
+            $validator = studentsTools::validateStudentData($data);
+    
+            if ($validator->fails()) {
+                return response()->json([
+                    "error" => "Error en validación",
+                    "errores" => $validator->errors()
+                ], 400);
+            }
+    
+            $id = $request->input('id');
+            $student = Student::find($id);
+    
+            if (!$student) {
+                return response()->json(['error' => 'Estudiante no encontrado'], 404);
+            }
+    
+            $student->update([
                 'names' => $data['names'],
                 'lastNames' => $data['lastNames'],
                 'bornDate' => $data['bornDate']
-            ]
-        );
-
-        if(!$student ){
-            return response()->json(['error'=>'error al crearlo'],500);
-        } 
-        return response()->json(['editado con exito'=>$student],201);
+            ]);
+    
+            return response()->json(['mensaje' => 'Editado con éxito', 'student' => $student], 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Ocurrió un error', 'mensaje' => $e->getMessage()], 500);
+        }
     }
+    
 }
